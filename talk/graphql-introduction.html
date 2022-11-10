@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>GraphQL Introduction</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="reveal.js/css/theme/solarized.css" id="theme">
+
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+    <style>
+        .right-img {
+            margin-left: 10px !important;
+            float: right;
+            height: 500px;
+        }
+        .todo:before {
+            content: 'TODO: ';
+        }
+        .todo {
+            color: red !important;
+        }
+        code span.line-number {
+            color: lightcoral;
+        }
+        .reveal pre code {
+            max-height: 1000px !important;
+        }
+
+        .reveal h3 {
+          text-transform: none;
+        }
+
+        img {
+            border: 0 !important;
+            box-shadow:0 0 0 0 !important;
+        }
+
+        .reveal {
+            -ms-touch-action: auto !important;
+            touch-action: auto !important;
+        }
+
+    </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'reveal.js/css/print/pdf.css' : 'reveal.js/css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+
+  <div class="reveal">
+    <div class="slides">
+
+      <section data-markdown class="preparation">
+        <script type="text/template">
+          ### Preparation
+
+          Run the application
+
+          Backend: ./mvnw spring-boot:run
+          Frontend: yarn install && yarn start
+
+          UI: http://localhost:8080
+          Backend (GraphiQL): http://localhost:9977
+
+        </script>
+      </section>
+
+      <section>
+        <h2>GraphQL</h2>
+        <h3><em>A query language for your API</em></h3>
+        <p style="font-size:small"><a href="https://twitter.com/nilshartmann">@nilshartmann</a></p>
+      </section>
+
+      <section>
+        <h2>GraphQL</h2>
+        <h3>A query language for your API</h3>
+        <em>"GraphQL is a <b>query language</b> for APIs and a <b>runtime</b> for fulfilling those queries with your existing data"</em>
+        <p><a href="http://graphql.org" target="_blank">http://graphql.org</a></p>
+        <p>Invented by Facebook for it's mobile News Feed 2012</p>
+        <p>Open Source since 2015</p>
+      </section>
+
+
+      <section>
+        <h2>Who uses GraphQL?</h2>
+
+        <p>Facebook (obviously)...</p>
+      </section>
+
+      <section>
+        <h2>Twitter</h2>
+        <img src="images/twitter-uses-graphql-tweet.png" />
+      </section>
+
+      <section>
+        <h2>GitHub</h2>
+        <img src="images/github-announces-graphql-api.png" style="max-height: 500px"/>
+      </section>
+
+      <section>
+        <h2>New York Times</h2>
+        <img src="images/nytimes-uses-graphql.png" style="max-height: 500px"/>
+      </section>
+
+      <section>
+        <h3>Example: Spring PetClinic </h3>
+        <h1>GraphQL in practice</h1>
+        <p><a href="https://github.com/spring-petclinic/spring-petclinic-graphql" target="_blank">https://github.com/spring-petclinic/spring-petclinic-graphql</a></p>
+        <p><a href="http://localhost:8080" target="_blank">Live on Localhost</a></p>
+        <p><a href="http://localhost:9977" target="_blank">GraphiQL</a></p>
+      </section>
+
+
+      <section>
+        <h1>GraphQL concepts</h1>
+      </section>
+
+      <section>
+        <h3>Query language</h3>
+        <pre><code data-trim contenteditable class="line-numbers" data-leftpad>query {
+  owner(id: 1) {
+    firstName
+    lastName
+  }
+}
+            </code></pre>
+        <ul>
+          <li>Structured language for accessing data from API</li>
+          <li>Looks similar to JSON (but isn't)</li>
+          <li>Request <b>fields</b> from (nested) objects</li>
+          <li>Fields can have <b>parameters</b> (like params in functions)</li>
+        </ul>
+
+      </section>
+      <section>
+        <h3>The Query Language</h3>
+        <p>Operations</p>
+        <ul>
+          <li>A Request consists of an <em>Operation</em>:
+            <ul>
+              <li><em>Query</em>: A read request</li>
+              <li><em>Mutation</em>: Request for modifying data</ul>
+          </li>
+          <li>An Operation can contain parameters (<code>ownerId: 1</code>) and can return a value</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Subscriptions</h2>
+        <h3>(New in Spec since May 2017)</h3>
+        <ul>
+          <li >Client can subscribe to changes
+          <li >On changes the Client will be notified (Push)
+        </ul>
+      </section>
+
+      <section>
+        <h2>Type system</h2>
+        <p>Defines the API (its Objects and Operations)</p>
+        <ul>
+          <li>Used by the GraphQL runtime to validate requests and responses</li>
+          <li>Scalar Types, Objects, Interfaces, Lists, Enums, ... </li>
+          <li>Invalid Request are rejected by the runtime (no need to care about in own code)</li>
+          <li>Basis for various tooling (Syntax Checking, Code Completion, API Browser, Documentation, ...)</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Runtime</h2>
+        <p>Server that executes GraphQL requests</p>
+        <ul>
+          <li>Libs for several languages exists</li>
+          <li>Reference implementation: JavaScript</li>
+          <li>Parses and validates the Request</li>
+          <li>Checks and serializes the Response</li>
+          <li>Actual retrieving of the requested data has to be implemented by the application itself</li>
+        </ul>
+      </section>
+
+
+
+
+
+      <section>
+        <h1>GraphQL Server</h1>
+      </section>
+
+      <section>
+        <h2>Java implementations</h2>
+        <p><a href="https://github.com/graphql-java/graphql-java-tools">graphql-java-tools</a></p>
+        <p><a href="https://github.com/graphql-java/graphql-java">graphql-java</a></p>
+        <p><a href="https://github.com/graphql-java/graphql-spring-boot">graphql-spring-boot</a></p>
+      </section>
+
+
+      <section>
+        <h3>Schema definition using an IDL</h3>
+        <p>(IDL based on JS reference implementation)</p>
+        <pre><code data-trim contenteditable class="line-numbers java" data-leftpad>
+# The Query Root type
+type Query {
+  # Return a List of all pets that have been registered in the PetClinic
+  pets: [Pet!]!
+
+  # Return the Pet with the specified id
+  pet(id: Int!): Pet!
+}
+
+type Pet {
+  id: Int!
+  name: String!
+  type: PetType!
+}
+            </code></pre>
+      </section>
+      <section>
+        <h3>Resolver</h3>
+        <ul>
+          <li>Fetch data for a field</li>
+          <li>There must be one Root resolver (for your query type)</li>
+          <li>Properties on beans are accessed using get-methods</li>
+          <li>You can define own resolvers for properties too</li>
+        </ul>
+      </section>
+      <section>
+        <h3>Example: Root Resolver</h3>
+        <pre><code data-trim contenteditable class="line-numbers java" data-leftpad>
+public class Query implements GraphQLQueryResolver {
+
+    private final PetRepository petRepository;
+
+    public Query(PetRepository petRepository) {
+        this.petRepository = petRepository;
+    }
+
+    public Pet pet(int id) {
+        return petRepository.findById(id);
+    }
+
+    public List&lt;Pet> pets() {
+        return petRepository.findAll();
+    }
+}
+
+        </code></pre>
+      </section>
+      <section>
+        <h3>Example: Resolver for a type</h3>
+        <pre><code data-trim contenteditable class="line-numbers java" data-leftpad>
+@Component
+public class
+PetResolver implements GraphQLResolver&lt;Pet> {
+    public VisitConnection visits(Pet pet) {
+        return new VisitConnection(pet.getVisits());
+    }
+
+    // all other fields that are exposed via the IDL
+    // are accessed directly from the Pet class
+}
+        </code></pre>
+      </section>
+      <section>
+        <h3>Example: Mutation definition</h3>
+        <pre><code data-trim contenteditable class="line-numbers java" data-leftpad>
+type Mutation {
+  # Add a new Pet
+  addPet(input: AddPetInput!): AddPetPayload!
+}
+
+# The Input for addPet Mutation
+input AddPetInput {
+  ownerId: Int!
+  name: String!
+  birthDate: Date!
+  typeId: Int!
+}
+
+# Return value for addPet Mutation
+type AddPetPayload {
+  pet: Pet!
+}
+
+        </code></pre>
+      </section>
+      <section>
+        <h3>Example: Mutation Resolver</h3>
+        <pre><code data-trim contenteditable class="line-numbers java" data-leftpad>
+@Component
+public class Mutation implements GraphQLMutationResolver {
+    private final PetRepository petRepository;
+    . . .
+
+    public Mutation(. . .) { . . . }
+
+    public AddPetPayload addPet(AddPetInput addPetInput) {
+        final Owner owner = ownerRepository.findById(addPetInput.getOwnerId());
+        final PetType type = petTypeRepository.findById(addPetInput.getTypeId());
+
+        Pet pet = new Pet();
+        pet.setName(addPetInput.getName());
+        pet.setType(type);
+        pet.setBirthDate(addPetInput.getBirthDate());
+        pet.setOwner(owner);
+        petRepository.save(pet);
+
+        return new AddPetPayload(pet);
+    }
+}
+        </code></pre>
+      </section>
+
+
+
+      <section>
+        <h1>GraphQL Client</h1>
+      </section>
+      <section>
+        <h3>Example: Plain HTTP/JSON</h3>
+        <pre><code data-trim contenteditable class="line-numbers bash" data-leftpad>
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ pets { name } }"}' \
+  http://localhost:9977/graphql
+        </code></pre>
+        <p>Result:</p>
+        <pre><code data-trim contenteditable class="line-numbers json" data-leftpad>
+{"data":
+  {"pets":
+    [
+      {"name":"Leo"},{"name":"Basil"}, . . .
+    ]
+  }
+}
+        </code></pre>
+      </section>
+      <section>
+        <h3>JavaScript implementations</h3>
+        <p><a href="http://graphql.org/graphql-js/" target="_blank">Reference implementation</a></p>
+        <p><a href="http://dev.apollodata.com/" target="_blank">Apollo</a> (for various Frameworks)</p>
+        <p><a href="http://dev.apollodata.com/react/" target="_blank">React Apollo</a> (used here)</p>
+      </section>
+
+      <section>
+        <h3>graphql HOC</h3>
+        <p>Apollo provides a graphql HOC that:</p>
+        <ul>
+          <li>Sends a Request to the server</li>
+          <li>Informs the client about the request status (e.g. loading)</li>
+          <li>Passes the result to the wrapped component</li>
+          <li>Does caching</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Example: A PetList component</h3>
+        <pre><code data-trim contenteditable class="line-numbers javascript" data-leftpad>
+// graphql HOC passes in a data object
+const PetList = ({data}) =>
+  data.loading ?
+     // loading is set to true by Apollo
+     // while request is pending
+     &lt;div>Loading...&lt;/div>
+  :
+    // otherwise we have the requested data here
+    {data.owners.map(owner =&gt; ...) }
+;
+        </code></pre>
+      </section>
+      <section>
+        <h3>Example: The graphql HOC</h3>
+      <pre><code data-trim contenteditable class="line-numbers javascript" data-leftpad>
+const PetList = . . .;
+const ownersQuery = gql`
+  query ownerList {
+    owners {
+      lastName
+      firstName
+  }
+}
+`
+export default graphql(ownersQuery)(PetList)
+        </code></pre>
+      </section>
+
+      <section>
+        <h1>Why GraphQL?</h1>
+      </section>
+
+      <section>
+        <h2>Perfect Fetching</h2>
+        <ul>
+          <li >Returns exactly what's needed
+          <li >
+            No under- or over fetching anymore
+            <ul>
+              <li>All needed data with one Request</li>
+              <li>Not <b>more</b> data as needed</li>
+            </ul>
+          </li>
+          <li >The shape of the result is specified in the query
+        </ul>
+      </section>
+
+      <section>
+        <h2>API Description using a Type System</h2>
+        <ul>
+          <li >Good development experience thanks to type system
+          <li >Validation by GraphQL Runtime
+          <li >Errors can be detected at development time
+            <img src="images/idea-unknown-field-in-query.png"/>
+
+          </li>
+        </ul>
+      </section>
+      <section>
+        <h2>Flexibility and decoupling</h2>
+        <ul>
+          <li >Client can raise individual Requests as needed
+          <li >No need to enhance API on serverside for new use cases (just query for other data)
+          <li >Enhancing/Changing the API without versioning possible (deprecations exists)
+        </ul>
+      </section>
+
+      <section>
+        <h2>Simplification</h2>
+        <ul>
+          <li >There is only <b>one</b> endpoint
+          <li >APIs all look the same (query language is standardized)
+          <li >Communication via JSON
+          <li >What fields are actually used can easily be tracked (and controlled) (eg for data protection!)
+        </ul>
+      </section>
+
+
+    </div>
+  </div>
+
+
+
+  <script src="reveal.js/lib/js/head.min.js"></script>
+<script src="reveal.js/js/reveal.js"></script>
+<script src="lib/jquery-2.2.4.js"></script>
+<script>
+    if (window.location.hostname.indexOf('localhost') !== -1) {
+    } else {
+        // only applies to public version
+        $('.preparation').remove();
+    }
+    Reveal.addEventListener( 'ready', function( event ) {
+        if (window.location.hostname.indexOf('localhost') !== -1) {
+            // only applies to presentation version
+            Reveal.configure({ controls: false });
+        } else {
+            // only applies to public version
+            $('.fragment').removeClass('fragment');
+        }
+        // applies to all versions
+        $('code').addClass('line-numbers');
+    } );
+</script>
+
+
+<script>
+
+    // Full list of configuration options available at:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+            {
+                src: 'reveal.js/lib/js/classList.js', condition: function () {
+                return !document.body.classList;
+            }
+            },
+            {
+                src: 'reveal.js/plugin/markdown/marked.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            }
+            },
+            {
+                src: 'reveal.js/plugin/markdown/markdown.js', condition: function () {
+                return !!document.querySelector('[data-markdown]');
+            }
+            },
+            {
+                src: 'reveal.js/plugin/highlight/highlight.js', async: true, condition: function () {
+                return !!document.querySelector('pre code');
+            }, callback: function () {
+                hljs.initHighlightingOnLoad();
+            }
+            },
+            {src: 'reveal.js/plugin/zoom-js/zoom.js', async: true},
+            {src: 'reveal.js/plugin/notes/notes.js', async: true},
+            {src: 'lib/js/line-numbers.js'}
+        ]
+    });
+
+</script>
+
+</body>
+</html>
